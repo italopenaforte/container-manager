@@ -13,29 +13,36 @@ import java.time.Duration
 class DockerClientConfig {
 
     // get env from application.properties
-    @Value("\${docker.socket.path}") private val dockerSocketPath: String = ""
+    @Value("\${docker.socket.path}")
+    private val dockerSocketPath: String = ""
 
     @Bean
     fun buildDockerClient(): DockerClient {
         // create a configuration class for a builder
-        var dockerClientConfigBuilder : DefaultDockerClientConfig.Builder = DefaultDockerClientConfig.createDefaultConfigBuilder();
+        var dockerClientConfigBuilder: DefaultDockerClientConfig.Builder =
+            DefaultDockerClientConfig.createDefaultConfigBuilder();
 
         // checks if the env is a unix socket
         this.dockerSocketPath.takeIf { it.isNotBlank() && it.startsWith("unix://") }?.let {
             dockerClientConfigBuilder.withDockerHost(it).withDockerTlsVerify(false)
         }
-        // create an object to recive the configuration
-        var dockerClientConfig : DefaultDockerClientConfig = dockerClientConfigBuilder.build()
+        // create an object to receive the configuration
+        var dockerClientConfig: DefaultDockerClientConfig = dockerClientConfigBuilder.build()
 
         // setup an http client for docker socket
-        var dockerHttpClient: ApacheDockerHttpClient? = ApacheDockerHttpClient.Builder()
-            .dockerHost(dockerClientConfig.getDockerHost())
-            .maxConnections(5)
-            .connectionTimeout(Duration.ofMillis(300))
-            .responseTimeout(Duration.ofSeconds(3))
-            .build()
+        var dockerHttpClient: ApacheDockerHttpClient? = null
+        try {
+            dockerHttpClient = ApacheDockerHttpClient.Builder()
+                .dockerHost(dockerClientConfig.getDockerHost())
+                .maxConnections(5)
+                .connectionTimeout(Duration.ofMillis(300))
+                .responseTimeout(Duration.ofSeconds(3))
+                .build()
+        } catch (e: Exception) {
+            print("Error while setup the docker http client $e")
+        }
 
-        // with config from docker and the http client setup, finally you can instante the docker client class
+        // with config from docker and the http client setup, finally you can instance the docker client class
         // using the dockerClientConfig object and the http client for the socket
         var client: DockerClient = DockerClientBuilder.getInstance(dockerClientConfig)
             .withDockerHttpClient(dockerHttpClient)
