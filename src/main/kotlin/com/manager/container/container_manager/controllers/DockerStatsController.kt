@@ -1,7 +1,5 @@
 package com.manager.container.container_manager.controllers
 
-import com.github.dockerjava.api.DockerClient
-import com.github.dockerjava.api.model.MemoryStatsConfig
 import com.github.dockerjava.api.model.Statistics
 import com.manager.container.container_manager.services.DockerService
 import org.springframework.web.bind.annotation.GetMapping

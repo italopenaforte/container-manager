@@ -1,7 +1,6 @@
 package com.manager.container.container_manager.services
 
 import com.github.dockerjava.api.DockerClient
-import com.github.dockerjava.api.async.ResultCallback
 import com.github.dockerjava.api.model.*
 import com.github.dockerjava.core.InvocationBuilder
 import org.springframework.stereotype.Service
