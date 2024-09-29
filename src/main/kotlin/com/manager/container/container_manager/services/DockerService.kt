@@ -61,16 +61,6 @@ class DockerService(private val dockerClient: DockerClient) {
     }
 
     fun findContainer(containerId: String): Container? {
-        val containers: List<Container> = dockerClient.listContainersCmd().exec()
-        if (containers.isEmpty()) {
-            return null
-        }
-
-        val container = containers.find { it.id == containerId }
-
-        if (container != null) {
-            return container
-        }
-        return null
+        return dockerClient.listContainersCmd().exec().find { it.id == containerId }
     }
 }
