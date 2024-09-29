@@ -17,12 +17,12 @@ class DockerClientConfig {
 
     @Bean
     fun buildDockerClient(): DockerClient {
-        // create an configuration class for a builder
+        // create a configuration class for a builder
         var dockerClientConfigBuilder : DefaultDockerClientConfig.Builder = DefaultDockerClientConfig.createDefaultConfigBuilder();
 
-        // checks if the env is an unix socket
-        if (this.dockerSocketPath.isNotBlank() && this.dockerSocketPath.startsWith("unix://")) {
-            dockerClientConfigBuilder.withDockerHost(this.dockerSocketPath).withDockerTlsVerify(false)
+        // checks if the env is a unix socket
+        this.dockerSocketPath.takeIf { it.isNotBlank() && it.startsWith("unix://") }?.let {
+            dockerClientConfigBuilder.withDockerHost(it).withDockerTlsVerify(false)
         }
         // create an object to recive the configuration
         var dockerClientConfig : DefaultDockerClientConfig = dockerClientConfigBuilder.build()
